@@ -1,0 +1,206 @@
+@using System.Text.Json
+@model DashboardViewModel
+
+@{
+    ViewData["Title"] = "Dashboard";
+    var welcomeName = string.IsNullOrWhiteSpace(Model.UserName) ? null : Model.UserName;
+    var jsonOptions = new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
+}
+
+<div class="dashboard-page">
+    <div class="dashboard-header">
+        <h1>Dashboard</h1>
+        <p>
+            @if (welcomeName is null)
+            {
+                @:Welcome back! Here's what's happening with your inventory.
+            }
+            else
+            {
+                @:Welcome back, @welcomeName! Here's what's happening with your inventory.
+            }
+        </p>
+    </div>
+
+    <div class="summary-grid">
+        <div class="summary-card">
+            <div class="summary-icon total">
+                <i class="bi bi-box-seam"></i>
+            </div>
+            <div class="summary-content">
+                <span>Total Assets</span>
+                <strong>@Model.TotalAssets</strong>
+            </div>
+        </div>
+
+        <div class="summary-card">
+            <div class="summary-icon available">
+                <i class="bi bi-check-circle"></i>
+            </div>
+            <div class="summary-content">
+                <span>Available Assets</span>
+                <strong>@Model.AvailableAssets</strong>
+            </div>
+        </div>
+
+        <div class="summary-card">
+            <div class="summary-icon assigned">
+                <i class="bi bi-person-check"></i>
+            </div>
+            <div class="summary-content">
+                <span>Assigned Assets</span>
+                <strong>@Model.AssignedAssets</strong>
+            </div>
+        </div>
+
+        <div class="summary-card">
+            <div class="summary-icon maintenance">
+                <i class="bi bi-tools"></i>
+            </div>
+            <div class="summary-content">
+                <span>Maintenance Assets</span>
+                <strong>@Model.MaintenanceAssets</strong>
+            </div>
+        </div>
+
+        <div class="summary-card">
+            <div class="summary-icon damaged">
+                <i class="bi bi-exclamation-triangle"></i>
+            </div>
+            <div class="summary-content">
+                <span>Damaged Assets</span>
+                <strong>@Model.DamagedAssets</strong>
+            </div>
+        </div>
+
+        <div class="summary-card">
+            <div class="summary-icon retired">
+                <i class="bi bi-archive"></i>
+            </div>
+            <div class="summary-content">
+                <span>Retired Assets</span>
+                <strong>@Model.RetiredAssets</strong>
+            </div>
+        </div>
+    </div>
+
+    <div class="charts-grid">
+        <section class="dashboard-card">
+            <div class="card-header">
+                <h3>Assets by Category</h3>
+            </div>
+            <div class="chart-section">
+                <div class="donut-wrap">
+                    <canvas id="categoryChart" aria-label="Assets by category chart"></canvas>
+                    <div class="donut-center">
+                        <strong>@Model.TotalAssets</strong>
+                        <span>Total</span>
+                    </div>
+                </div>
+                <div class="chart-legend">
+                    @foreach (var category in Model.CategorySummary)
+                    {
+                        <div class="legend-item">
+                            <span class="legend-dot" style="background:@category.Color"></span>
+                            <span class="legend-name">@category.CategoryName</span>
+                            <strong>@category.Count</strong>
+                        </div>
+                    }
+                    @if (!Model.CategorySummary.Any())
+                    {
+                        <p class="empty-state">No category data yet.</p>
+                    }
+                </div>
+            </div>
+        </section>
+
+        <section class="dashboard-card">
+            <div class="card-header">
+                <h3>Assets by Status</h3>
+            </div>
+            <div class="chart-section">
+                <div class="donut-wrap">
+                    <canvas id="statusChart" aria-label="Assets by status chart"></canvas>
+                    <div class="donut-center">
+                        <strong>@Model.TotalAssets</strong>
+                        <span>Total</span>
+                    </div>
+                </div>
+                <div class="chart-legend">
+                    @foreach (var status in Model.StatusSummary)
+                    {
+                        <div class="legend-item">
+                            <span class="legend-dot" style="background:@status.Color"></span>
+                            <span class="legend-name">@status.Status</span>
+                            <strong>@status.Count (@status.Percentage.ToString("0.0")%)</strong>
+                        </div>
+                    }
+                    @if (!Model.StatusSummary.Any())
+                    {
+                        <p class="empty-state">No status data yet.</p>
+                    }
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <div class="bottom-grid">
+        <section class="dashboard-card">
+            <div class="card-header">
+                <h3>Recent Activities</h3>
+            </div>
+            <div class="activities-list">
+                @if (Model.RecentActivities.Any())
+                {
+                    foreach (var activity in Model.RecentActivities)
+                    {
+                        <div class="activity-item">
+                            <div class="activity-icon">
+                                <i class="bi @activity.Icon"></i>
+                            </div>
+                            <div class="activity-content">
+                                <span>@activity.Description</span>
+                                <small>@activity.Time</small>
+                            </div>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <p class="empty-state">No recent inventory activity.</p>
+                }
+            </div>
+        </section>
+
+        <section class="dashboard-card">
+            <div class="card-header">
+                <h3>Quick Actions</h3>
+            </div>
+            <div class="quick-actions">
+                <a class="quick-btn primary" asp-controller="Dashboard" asp-action="Index">
+                    <i class="bi bi-plus-lg"></i>
+                    Add New Asset
+                </a>
+                <a class="quick-btn" asp-controller="Dashboard" asp-action="Index">
+                    <i class="bi bi-file-earmark-bar-graph"></i>
+                    Generate Report
+                </a>
+                <a class="quick-btn" asp-controller="Dashboard" asp-action="Index">
+                    <i class="bi bi-box-seam"></i>
+                    View All Assets
+                </a>
+            </div>
+        </section>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    <script>
+        window.dashboardData = {
+            categories: @Html.Raw(JsonSerializer.Serialize(Model.CategorySummary, jsonOptions)),
+            statuses: @Html.Raw(JsonSerializer.Serialize(Model.StatusSummary, jsonOptions))
+        };
+    </script>
+    <script src="~/js/dashboard.js" asp-append-version="true"></script>
+}

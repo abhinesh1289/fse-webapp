@@ -1,0 +1,126 @@
+@model InventoryManagementSystem.ViewModels.ProfileViewModel
+@{
+    ViewData["Title"] = "My Profile";
+}
+<div class="container-fluid py-4">
+    <div class="row justify-content-center">
+        <div class="col-md-10 col-lg-8">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">
+                        <i class="bi bi-person-circle"></i>
+                        My Profile
+                    </h4>
+                </div>
+                <div class="card-body p-4">
+                    @if (TempData["SuccessMessage"] != null)
+                    {
+                        <div class="alert alert-success"
+                             role="alert">
+                            <i class="bi bi-check-circle"></i>
+                            @TempData["SuccessMessage"]
+                        </div>
+                    }
+                    <form asp-controller="Profile"
+                          asp-action="Index"
+                          method="post">
+                        @Html.AntiForgeryToken()
+                        <div asp-validation-summary="ModelOnly"
+                             class="alert alert-danger"
+                             role="alert">
+                        </div>
+                        <!-- Full Name -->
+                        <div class="mb-3">
+                            <label asp-for="FullName"
+                                   class="form-label">
+                            </label>
+                            <input asp-for="FullName"
+                                   class="form-control" />
+                            <span asp-validation-for="FullName"
+                                  class="text-danger">
+                            </span>
+                        </div>
+                        <!-- Username -->
+                        <div class="mb-3">
+                            <label asp-for="Username"
+                                   class="form-label">
+                            </label>
+                            <input asp-for="Username"
+                                   class="form-control"
+                                   readonly />
+                            <small class="text-muted">
+                                Username cannot be changed.
+                            </small>
+                        </div>
+                        <!-- Email -->
+                        <div class="mb-3">
+                            <label asp-for="Email"
+                                   class="form-label">
+                            </label>
+                            <input asp-for="Email"
+                                   class="form-control"
+                                   type="email" />
+                            <span asp-validation-for="Email"
+                                  class="text-danger">
+                            </span>
+                        </div>
+                        <!-- Role -->
+                        <div class="mb-3">
+                            <label class="form-label">
+                                Role
+                            </label>
+                            <input value="@Model.RoleName"
+                                   class="form-control"
+                                   readonly />
+                        </div>
+                        <!-- Account Status -->
+                        <div class="mb-3">
+                            <label class="form-label">
+                                Account Status
+                            </label>
+                            <input value="@(Model.IsActive ? "Active" : "Inactive")"
+                                   class="form-control"
+                                   readonly />
+                        </div>
+                        <!-- Created Date -->
+                        <div class="mb-4">
+                            <label class="form-label">
+                                Account Created
+                            </label>
+                            <input value="@Model.CreatedDate.ToLocalTime().ToString("dd-MM-yyyy HH:mm")"
+                                   class="form-control"
+                                   readonly />
+                        </div>
+                        <!-- Buttons -->
+                        <div class="d-flex flex-wrap gap-2">
+                            <button type="submit"
+                                    class="btn btn-primary">
+                                <i class="bi bi-save"></i>
+                                Save Changes
+                            </button>
+                            <a asp-controller="Profile"
+                               asp-action="ChangePassword"
+                               class="btn btn-outline-primary">
+                                <i class="bi bi-key"></i>
+                                Change Password
+                            </a>
+                            <a asp-controller="Dashboard"
+                               asp-action="Index"
+                               class="btn btn-secondary">
+                                <i class="bi bi-speedometer2"></i>
+                                Dashboard
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts
+{
+    @{
+        await Html.RenderPartialAsync(
+            "_ValidationScriptsPartial");
+    }
+}

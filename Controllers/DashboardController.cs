@@ -1,10 +1,12 @@
-using Inventory_Managgement1.Models;
-using Inventory_Managgement1.Services;
+using InventoryManagementSystem.Services;
+using InventoryManagementSystem.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 
-namespace Inventory_Managgement1.Controllers
+namespace InventoryManagementSystem.Controllers
 {
+    [Authorize]
     public class DashboardController : Controller
     {
         private readonly IDashboardService _dashboardService;
@@ -14,34 +16,23 @@ namespace Inventory_Managgement1.Controllers
             _dashboardService = dashboardService;
         }
 
-        public async Task<IActionResult> Index(CancellationToken cancellationToken)
+        [HttpGet]
+        public async Task<IActionResult> Index(
+            CancellationToken cancellationToken)
         {
-            var model = await _dashboardService.GetDashboardAsync(cancellationToken);
-            model.UserName = GetDisplayName();
-            model.UserRole = GetDisplayRole();
+            var model = await _dashboardService
+                .GetDashboardAsync(cancellationToken);
 
-            ViewData["UserName"] = model.UserName;
-            ViewData["UserRole"] = model.UserRole;
+            model.UserName =
+                User.FindFirstValue(ClaimTypes.GivenName)
+                ?? User.Identity?.Name
+                ?? "User";
+
+            model.UserRole =
+                User.FindFirstValue(ClaimTypes.Role)
+                ?? "User";
 
             return View(model);
-        }
-
-        private string? GetDisplayName()
-        {
-            if (User.Identity?.IsAuthenticated != true)
-            {
-                return User.Identity?.Name;
-            }
-
-            return User.FindFirstValue(ClaimTypes.GivenName)
-                   ?? User.FindFirstValue("name")
-                   ?? User.Identity?.Name;
-        }
-
-        private string? GetDisplayRole()
-        {
-            return User.FindFirstValue(ClaimTypes.Role)
-                   ?? User.FindFirstValue("role");
         }
     }
 }

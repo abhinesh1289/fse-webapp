@@ -1,10 +1,16 @@
-namespace Inventory_Managgement1.Models
+using System.ComponentModel.DataAnnotations;
+namespace InventoryManagementSystem.Models
 {
     public class Category
     {
         public int Id { get; set; }
+        [Required]
+        [StringLength(100)]
         public string Name { get; set; } = string.Empty;
-
-        public ICollection<Asset> Assets { get; set; } = new List<Asset>();
+        [StringLength(250)]
+        public string? Description { get; set; }
+        public bool IsActive { get; set; } = true;
+        public ICollection<Assest> Assets { get; set; }
+            = new List<Assest>();
     }
 }

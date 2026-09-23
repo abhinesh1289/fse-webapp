@@ -1,0 +1,109 @@
+@model IEnumerable<InventoryManagementSystem.Models.User>
+@{
+    ViewData["Title"] = "Users";
+}
+<div class="container-fluid py-4">
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="mb-1">
+                <i class="bi bi-people"></i>
+                Users
+            </h2>
+            <p class="text-muted mb-0">
+                View and manage system users.
+            </p>
+        </div>
+        <a asp-controller="Dashboard"
+           asp-action="Index"
+           class="btn btn-outline-primary">
+            <i class="bi bi-speedometer2"></i>
+            Dashboard
+        </a>
+    </div>
+    <!-- Users Table -->
+    <div class="card shadow-sm">
+        <div class="card-header">
+            <h5 class="mb-0">
+                <i class="bi bi-person-lines-fill"></i>
+                System Users
+            </h5>
+        </div>
+        <div class="card-body p-0">
+            @if (Model == null || !Model.Any())
+            {
+                <div class="text-center py-5">
+                    <i class="bi bi-people"
+                       style="font-size: 60px;"></i>
+                    <h5 class="mt-3">
+                        No Users Found
+                    </h5>
+                    <p class="text-muted mb-0">
+                        No users are currently available.
+                    </p>
+                </div>
+            }
+            else
+            {
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead>
+                            <tr>
+                                <th>
+                                    Username
+                                </th>
+                                <th>
+                                    Full Name
+                                </th>
+                                <th>
+                                    Email
+                                </th>
+                                <th>
+                                    Role
+                                </th>
+                                <th>
+                                    Status
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var user in Model)
+                            {
+                                <tr>
+                                    <td>
+                                        <strong>
+                                            @user.Username
+                                        </strong>
+                                    </td>
+                                    <td>
+                                        @user.FullName
+                                    </td>
+                                    <td>
+                                        @user.Email
+                                    </td>
+                                    <td>
+                                        @(user.Role?.Name ?? "-")
+                                    </td>
+                                    <td>
+                                        @if (user.IsActive)
+                                        {
+                                            <span class="badge bg-success">
+                                                Active
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-secondary">
+                                                Inactive
+                                            </span>
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+        </div>
+    </div>
+</div>

@@ -1,100 +1,226 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - Inventory Management</title>
-    <script type="importmap"></script>
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
-    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/css/dashboard.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/Inventory_Managgement1.styles.css" asp-append-version="true" />
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0" />
+
+    <title>
+        @ViewData["Title"] - Inventory Management System
+    </title>
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" />
+
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+
+    <!-- Application CSS -->
+    <link rel="stylesheet"
+          href="~/css/site.css"
+          asp-append-version="true" />
+
     @await RenderSectionAsync("Styles", required: false)
 </head>
-<body class="app-body">
-    @{
-        var currentController = ViewContext.RouteData.Values["controller"]?.ToString();
-        var userName = ViewData["UserName"] as string ?? User.Identity?.Name;
-        var userRole = ViewData["UserRole"] as string;
-        var displayName = string.IsNullOrWhiteSpace(userName) ? "Guest" : userName;
-        var initials = displayName.Length >= 2 ? displayName[..1].ToUpperInvariant() : "G";
-    }
 
-    <aside class="app-sidebar" id="appSidebar">
-        <div class="sidebar-brand">
-            <span class="brand-icon"><i class="bi bi-box-seam-fill"></i></span>
-            <div>
-                <strong>Inventory</strong>
-                <small>Management System</small>
-            </div>
-        </div>
+<body>
 
-        <nav class="sidebar-nav">
-            <a class="@(currentController == "Dashboard" ? "active" : null)" asp-controller="Dashboard" asp-action="Index">
-                <i class="bi bi-grid-1x2-fill"></i> Dashboard
-            </a>
-            <a href="#">
-                <i class="bi bi-box-seam"></i> Inventory
-            </a>
-            <a href="#">
-                <i class="bi bi-tags"></i> Categories
-            </a>
-            <a href="#">
-                <i class="bi bi-people"></i> Users
-            </a>
-            <a href="#">
-                <i class="bi bi-shield-lock"></i> Roles &amp; Permissions
-            </a>
-            <a href="#">
-                <i class="bi bi-building"></i> Organisation
-            </a>
-            <a href="#">
-                <i class="bi bi-bar-chart"></i> Reports
-            </a>
-            <a href="#">
-                <i class="bi bi-bell"></i> Notifications
-            </a>
-            <a href="#">
-                <i class="bi bi-person"></i> My Profile
-            </a>
-            <a href="#">
-                <i class="bi bi-box-arrow-right"></i> Logout
-            </a>
-        </nav>
-    </aside>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm">
 
-    <div class="app-shell">
-        <header class="app-header">
-            <button type="button" class="icon-btn" id="sidebarToggle" aria-label="Toggle menu">
-                <i class="bi bi-list"></i>
+        <div class="container-fluid">
+
+            <!-- Brand -->
+            <a class="navbar-brand"
+               asp-controller="Dashboard"
+               asp-action="Index">
+
+                <i class="bi bi-box-seam"></i>
+                Inventory Management System
+
+            </a>
+
+
+            <!-- Mobile Menu Button -->
+            <button class="navbar-toggler"
+                    type="button"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#mainNavbar"
+                    aria-controls="mainNavbar"
+                    aria-expanded="false"
+                    aria-label="Toggle navigation">
+
+                <span class="navbar-toggler-icon"></span>
+
             </button>
 
-            <div class="header-actions">
-                <button type="button" class="icon-btn" aria-label="Notifications">
-                    <i class="bi bi-bell"></i>
-                </button>
-                <div class="header-user">
-                    <div class="user-copy">
-                        <strong>@displayName</strong>
-                        @if (!string.IsNullOrWhiteSpace(userRole))
+
+            <div class="collapse navbar-collapse"
+                 id="mainNavbar">
+
+                @if (User.Identity?.IsAuthenticated == true)
+                {
+                    <!-- Main Navigation -->
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+
+                        <!-- Dashboard -->
+                        <li class="nav-item">
+                            <a class="nav-link"
+                               asp-controller="Dashboard"
+                               asp-action="Index">
+                                <i class="bi bi-speedometer2"></i>
+                                Dashboard
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link"
+                               asp-controller="Assets"
+                               asp-action="Index">
+                                <i class="bi bi-box-seam"></i>
+                                Assets
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link"
+                               asp-controller="Categories"
+                               asp-action="Index">
+                                <i class="bi bi-tags"></i>
+                                Categories
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link"
+                               asp-controller="Reports"
+                               asp-action="Index">
+                                <i class="bi bi-file-earmark-bar-graph"></i>
+                                Reports
+                            </a>
+                        </li>
+                        @if (User.IsInRole("Asset Manager"))
                         {
-                            <small>@userRole</small>
+                            <li class="nav-item">
+                                <a class="nav-link"
+                                   asp-controller="Users"
+                                   asp-action="Index">
+                                    <i class="bi bi-people"></i>
+                                    Users
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link"
+                                   asp-controller="Roles"
+                                   asp-action="Index">
+                                    <i class="bi bi-shield-lock"></i>
+                                    Roles
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link"
+                                   asp-controller="Organisation"
+                                   asp-action="Index">
+                                    <i class="bi bi-building"></i>
+                                    Organisation
+                                </a>
+                            </li>
                         }
-                    </div>
-                    <div class="user-avatar" aria-hidden="true">@initials</div>
-                </div>
+                    </ul>
+                    <ul class="navbar-nav ms-auto align-items-center">
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle"
+                               href="#"
+                               id="profileDropdown"
+                               role="button"
+                               data-bs-toggle="dropdown"
+                               aria-expanded="false">
+                                <i class="bi bi-person-circle"></i>
+                                @(User.FindFirst(
+                                    System.Security.Claims.ClaimTypes.GivenName)?.Value
+                                    ?? User.Identity?.Name
+                                    ?? "User")
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end shadow"
+                                aria-labelledby="profileDropdown">
+                                <li>
+
+                                    <a class="dropdown-item"
+                                       asp-controller="Profile"
+                                       asp-action="Index">
+
+                                        <i class="bi bi-person-circle me-2"></i>
+                                        My Profile
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item"
+                                       asp-controller="Notifications"
+                                       asp-action="Index">
+                                        <i class="bi bi-bell me-2"></i>
+                                        Notifications
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item"
+                                       asp-controller="Profile"
+                                       asp-action="ChangePassword">
+                                        <i class="bi bi-key me-2"></i>
+                                        Change Password
+                                    </a>
+                                </li>
+                                <li>
+                                    <hr class="dropdown-divider" />
+                                </li>
+                                <li>
+                                    <form asp-controller="Account"
+                                          asp-action="Logout"
+                                          method="post">
+                                        @Html.AntiForgeryToken()
+                                        <button type="submit"
+                                                class="dropdown-item text-danger">
+
+                                            <i class="bi bi-box-arrow-right me-2"></i>
+                                            Logout
+                                        </button>
+                                    </form>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                }
+                else
+                {
+                    <ul class="navbar-nav ms-auto">
+                        <li class="nav-item">
+                            <a class="nav-link"
+                               asp-controller="Account"
+                               asp-action="Login">
+                                <i class="bi bi-box-arrow-in-right"></i>
+                                Login
+                            </a>
+                        </li>
+                    </ul>
+                }
             </div>
-        </header>
-
-        <main class="app-content">
-            @RenderBody()
-        </main>
-    </div>
-
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/site.js" asp-append-version="true"></script>
+        </div>
+    </nav>
+    <main>
+        @RenderBody()
+    </main>
+    <footer class="border-top mt-5 py-3 bg-white">
+        <div class="container text-center">
+            <span class="text-muted">
+                &copy; @DateTime.Now.Year
+                Inventory Management System
+            </span>
+        </div>
+    </footer>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js">
+    </script>
+    <script src="~/js/site.js"
+            asp-append-version="true">
+    </script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

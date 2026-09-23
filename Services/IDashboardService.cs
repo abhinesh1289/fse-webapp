@@ -1,9 +1,10 @@
-using Inventory_Managgement1.Models;
+using InventoryManagementSystem.ViewModels;
 
-namespace Inventory_Managgement1.Services
+namespace InventoryManagementSystem.Services
 {
     public interface IDashboardService
     {
-        Task<DashboardViewModel> GetDashboardAsync(CancellationToken cancellationToken = default);
+        Task<DashboardViewModel> GetDashboardAsync(
+            CancellationToken cancellationToken);
     }
 }
